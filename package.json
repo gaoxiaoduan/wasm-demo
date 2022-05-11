@@ -1,0 +1,20 @@
+{
+  "name": "wasm-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+   "build:wasm":"./build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaoxiaoduan/wasm-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaoxiaoduan/wasm-demo/issues"
+  },
+  "homepage": "https://github.com/gaoxiaoduan/wasm-demo#readme"
+}
