@@ -1,0 +1,27 @@
+* {
+  font-family: "Arial,sans-serif";
+}
+
+.fps-num {
+  font-size: 50px;
+}
+
+.video {
+  display: none;
+}
+
+.operation {
+  margin: 20px;
+}
+
+button {
+  width: 150px;
+  height: 30px;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.radio-text {
+  font-size: 13px;
+}
