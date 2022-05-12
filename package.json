@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "build:wasm":"./build.sh"
+    "build:wasm": "./build.sh",
+    "build:wasm-dip": "./build-dip.sh"
   },
   "repository": {
     "type": "git",
