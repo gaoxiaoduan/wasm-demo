@@ -14,11 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     wasmTimeRecords = [];
   let clientX, clientY;
 
-  let bytes = await fetch("build/dip.wasm").then((res) => res.arrayBuffer());
-  let { instance, module } = await WebAssembly.instantiate(bytes);
-  let { cppConvFilter, cppGetKernelPtr, cppGetDataPtr, memory } =
-    instance.exports;
-
   // 自动播放 <video> 载入的视频
   video.play().catch((error) => {
     console.error("The video can not autoplay!");
@@ -137,25 +132,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   //   [-1, -1, -1],
   // ]);
 
-  // --------------------------wasm实现部分--------------------------------------
-  const dataOffset = cppGetDataPtr();
-  const kernOffset = cppGetKernelPtr();
-  const flatKernel = [...kernel].flat(); // 扁平化卷积核的二维数组到一位数组，以方便数据的填充
-
-  // 为 Wasm 模块的线性内存段设置两个用于进行数据操作的视图，分别对应卷积核矩阵和帧像素数据
-  let Uint8View = new Uint8Array(memory.buffer);
-  let Int8View = new Int8Array(memory.buffer);
-
-  // 填充卷积核矩阵数据
-  Int8View.set(flatKernel, kernOffset);
-
-  const filterWasm = (pixelsData, width, height) => {
-    const aLen = pixelsData.length;
-    Uint8View.set(pixelsData, dataOffset); // 填充当前帧画面的像素数据
-    cppConvFilter(width, height, 4); // 调用滤镜处理函数
-    return Uint8View.subarray(dataOffset, aLen); // 返回经过处理的数据
-  };
-
   // -------------------------js实现部分---------------------------------------
   const jsConvFilter = (data, width, height, kernel) => {
     const divisor = 4; // 分量调节参数
@@ -195,5 +171,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const filterJS = (pixelData, width, height) => {
     return jsConvFilter(pixelData, width, height, kernel);
+  };
+
+  // --------------------------wasm实现部分--------------------------------------
+  let bytes = await fetch("build/dip.wasm").then((res) => res.arrayBuffer());
+  let { instance, module } = await WebAssembly.instantiate(bytes);
+  let { cppConvFilter, cppGetKernelPtr, cppGetDataPtr, memory } =
+    instance.exports;
+  const dataOffset = cppGetDataPtr();
+  const kernOffset = cppGetKernelPtr();
+  const flatKernel = [...kernel].flat(); // 扁平化卷积核的二维数组到一位数组，以方便数据的填充
+
+  // 为 Wasm 模块的线性内存段设置两个用于进行数据操作的视图，分别对应卷积核矩阵和帧像素数据
+  let Uint8View = new Uint8Array(memory.buffer);
+  let Int8View = new Int8Array(memory.buffer);
+
+  // 填充卷积核矩阵数据
+  Int8View.set(flatKernel, kernOffset);
+
+  const filterWasm = (pixelsData, width, height) => {
+    const aLen = pixelsData.length;
+    Uint8View.set(pixelsData, dataOffset); // 填充当前帧画面的像素数据
+    cppConvFilter(width, height, 4); // 调用滤镜处理函数
+    return Uint8View.subarray(dataOffset, aLen); // 返回经过处理的数据
   };
 });
