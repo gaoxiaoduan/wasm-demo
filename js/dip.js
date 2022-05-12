@@ -71,8 +71,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // <video> 视频资源加载完毕后执行
   video.addEventListener("loadeddata", () => {
-    debugger;
-
     // 根据 <video> 载入视频大小调整对应的 <canvas> 尺寸
     canvas.setAttribute("height", video.videoHeight);
     canvas.setAttribute("width", video.videoWidth);
